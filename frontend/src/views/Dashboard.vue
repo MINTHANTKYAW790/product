@@ -29,7 +29,7 @@
             <div class="quantity-control" @click.stop>
               <button @click="decreaseQuantity(product.id)" :disabled="!getQuantity(product.id)">-</button>
               <span>{{ getQuantity(product.id) || 0 }}</span>
-              <button @click="increaseQuantity(product.id)" :disabled="!isSelected(product.id)">+</button>
+              <button @click="increaseQuantity(product.id)" :disabled="getQuantity(product.id) >= product.stock">+</button>
             </div>
           </div>
         </div>
@@ -180,7 +180,7 @@ const toggleSelection = (product) => {
 
 const increaseQuantity = (productId) => {
   const item = cart.value.find(item => item.product.id === productId)
-  if (item) {
+  if (item && item.quantity < item.product.stock) {
     item.quantity++
   }
 }
@@ -220,6 +220,7 @@ const placeOrder = async () => {
     }
     
     cart.value = []
+    await fetchProducts()
     await fetchOrders()
   } catch (err) {
     orderMessage.value = {

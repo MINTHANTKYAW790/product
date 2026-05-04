@@ -35,6 +35,12 @@ class OrderController extends Controller
                     ]);
                 }
 
+                if ($item['quantity'] > $product->stock) {
+                    throw ValidationException::withMessages([
+                        'quantity' => ["Insufficient stock for {$product->name}. Available: {$product->stock}"],
+                    ]);
+                }
+
                 $itemTotal = $product->price * $item['quantity'];
                 $totalPrice += $itemTotal;
 
@@ -42,6 +48,7 @@ class OrderController extends Controller
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'price' => $product->price,
+                    'product' => $product,
                 ];
             }
 
@@ -57,6 +64,8 @@ class OrderController extends Controller
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                 ]);
+
+                $item['product']->decrement('stock', $item['quantity']);
             }
 
             DB::commit();
