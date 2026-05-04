@@ -262,7 +262,7 @@ const formatDate = (dateString) => {
 }
 
 .header {
-  background-color: #4CAF50;
+  background-color: #B71C1C;
   color: white;
   padding: 20px;
   display: flex;
